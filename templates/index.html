@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Asistente Reglamento</title>
+
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Asistente Académico</h1>
+
+        <input type="text" id="question" placeholder="Haz una pregunta...">
+
+        <input id="question" placeholder="Pregunta...">
+        <button onclick="ask()">Enviar</button>
+
+        <button onclick="askQuestion()">
+            Consultar
+        </button>
+        <script>
+            async function ask() {
+                const question = document.getElementById("question").value;
+
+                const res = await fetch("/ask", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await res.json();
+
+                document.getElementById("response").innerText =
+                    data.respuesta;
+            }
+        </script>
+
+        <div id="response"></div>
+
+        <div id="sources"></div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</body>
+
+</html>

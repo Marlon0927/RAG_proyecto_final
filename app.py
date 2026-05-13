@@ -1,27 +1,15 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
-from rag import consultar_rag
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+#from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
+templates = Jinja2Templates(directory="templates")
 
-class Query(BaseModel):
-    question: str
-
-@app.post("/ask")
-def ask(query: Query):
-
-    result = consultar_rag(
-        query.question
+@app.get("/")
+def home(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html"
+        #{"request": request}
     )
-
-    return result
