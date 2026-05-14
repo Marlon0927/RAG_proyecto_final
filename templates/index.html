@@ -2,56 +2,135 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <title>Asistente Reglamento</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/styles.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Asistente Académico IA</title>
+
+    <!-- Fonts -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="/static/styles.css"
+    >
+
 </head>
 
 <body>
 
     <div class="container">
 
+        <!-- HEADER -->
         <header class="app-header">
-            <h1>Asistente Académico</h1>
-            <p class="tagline">Consulta inteligente de documentos</p>
+
+            <div class="hero-badge">
+                AI • RAG • PDF Intelligence
+            </div>
+
+            <h1>
+                Asistente Académico
+            </h1>
+
+            <p class="tagline">
+                Consulta reglamentos y documentos mediante búsqueda semántica e inteligencia artificial.
+            </p>
+
         </header>
 
         <!-- SUBIR PDF -->
         <section class="card">
-            <h3 class="section-title">
-                <span class="step">01</span>
-                Subir PDF
-            </h3>
+
+            <div class="section-header">
+
+                <h3 class="section-title">
+                    <span class="step">01</span>
+                    Cargar documento
+                </h3>
+
+                <span class="section-subtitle">
+                    PDF académico
+                </span>
+
+            </div>
 
             <div class="file-row">
-                <input type="file" id="pdfFile" accept=".pdf">
-                <button onclick="uploadPDF()">Cargar PDF</button>
+
+                <input
+                    type="file"
+                    id="pdfFile"
+                    accept=".pdf"
+                >
+
+                <button onclick="uploadPDF()">
+                    Cargar PDF
+                </button>
+
             </div>
 
             <div id="uploadStatus"></div>
+
         </section>
 
-        <!-- HACER PREGUNTAS -->
+        <!-- CONSULTA -->
         <section class="card">
-            <h3 class="section-title">
-                <span class="step">02</span>
-                Consultar documento
-            </h3>
+
+            <div class="section-header">
+
+                <h3 class="section-title">
+                    <span class="step">02</span>
+                    Consultar documento
+                </h3>
+
+                <span class="section-subtitle">
+                    Preguntas inteligentes
+                </span>
+
+            </div>
 
             <div class="query-row">
+
                 <input
                     type="text"
                     id="question"
-                    placeholder="Haz una pregunta sobre el documento..."
+                    placeholder="Ejemplo: ¿Cuáles son las causales de cancelación de semestre?"
                 >
-                <button onclick="askQuestion()">Enviar</button>
+
+                <button onclick="askQuestion()">
+                    Consultar
+                </button>
+
             </div>
 
-            <div id="response"></div>
-            <div id="sources"></div>
+            <!-- RESPUESTA -->
+            <div class="response-wrapper">
+
+                <div id="response"></div>
+
+                <div id="sources"></div>
+
+            </div>
+
         </section>
 
     </div>
