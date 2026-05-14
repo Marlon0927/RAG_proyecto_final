@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Asistente Reglamento</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 
@@ -12,41 +14,49 @@
 
     <div class="container">
 
-        <h1>Asistente Académico</h1>
+        <header class="app-header">
+            <h1>Asistente Académico</h1>
+            <p class="tagline">Consulta inteligente de documentos</p>
+        </header>
 
         <!-- SUBIR PDF -->
-        <h3>Subir PDF</h3>
+        <section class="card">
+            <h3 class="section-title">
+                <span class="step">01</span>
+                Subir PDF
+            </h3>
 
-        <input type="file" id="pdfFile" accept=".pdf">
+            <div class="file-row">
+                <input type="file" id="pdfFile" accept=".pdf">
+                <button onclick="uploadPDF()">Cargar PDF</button>
+            </div>
 
-        <button onclick="uploadPDF()">
-            Cargar PDF
-        </button>
-
-        <div id="uploadStatus"></div>
-
-        <hr>
+            <div id="uploadStatus"></div>
+        </section>
 
         <!-- HACER PREGUNTAS -->
-        <h3>Consultar documento</h3>
+        <section class="card">
+            <h3 class="section-title">
+                <span class="step">02</span>
+                Consultar documento
+            </h3>
 
-        <input
-            type="text"
-            id="question"
-            placeholder="Haz una pregunta..."
-        >
+            <div class="query-row">
+                <input
+                    type="text"
+                    id="question"
+                    placeholder="Haz una pregunta sobre el documento..."
+                >
+                <button onclick="askQuestion()">Enviar</button>
+            </div>
 
-        <button onclick="askQuestion()">
-            Enviar
-        </button>
-
-        <div id="response"></div>
-
-        <div id="sources"></div>
+            <div id="response"></div>
+            <div id="sources"></div>
+        </section>
 
     </div>
 
-<script src="/static/script.js"></script>
+    <script src="/static/script.js"></script>
 
 </body>
 
