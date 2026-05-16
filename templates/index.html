@@ -5,35 +5,21 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Asistente Académico IA</title>
 
     <!-- Fonts -->
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:wght@300;400;500;600&display=swap"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
     <!-- CSS -->
-    <link
-        rel="stylesheet"
-        href="/static/styles.css"
-    >
+    <link rel="stylesheet" href="/static/styles.css">
 
 </head>
 
@@ -58,6 +44,12 @@
 
         </header>
 
+        <div class="pdf-manager">
+            <h2>📚 Documentos cargados</h2>
+
+            <div id="pdfList"></div>
+        </div>
+
         <!-- SUBIR PDF -->
         <section class="card">
 
@@ -76,11 +68,7 @@
 
             <div class="file-row">
 
-                <input
-                    type="file"
-                    id="pdfFile"
-                    accept=".pdf"
-                >
+                <input type="file" id="pdfFile" accept=".pdf">
 
                 <button onclick="uploadPDF()">
                     Cargar PDF
@@ -110,11 +98,8 @@
 
             <div class="query-row">
 
-                <input
-                    type="text"
-                    id="question"
-                    placeholder="Ejemplo: ¿Cuáles son las causales de cancelación de semestre?"
-                >
+                <input type="text" id="question"
+                    placeholder="Ejemplo: ¿Cuáles son las causales de cancelación de semestre?">
 
                 <button onclick="askQuestion()">
                     Consultar

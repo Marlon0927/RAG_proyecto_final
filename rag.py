@@ -23,45 +23,81 @@ def consultar_rag(pregunta):
 
     try:
 
-        # Conectar ChromaDB SIEMPRE
+        print("\n========== CONSULTA RAG ==========")
+
+        print(f"❓ Pregunta: {pregunta}")
+
+        # Conectar Chroma
         client = chromadb.PersistentClient(
             path="./chroma_db"
         )
 
-        # Obtener colección ACTUAL
         collection = client.get_collection(
-            "reglamento"
+            "documentos"
+        )
+
+        print(
+            "📦 Total embeddings:",
+            collection.count()
         )
 
         # Embedding pregunta
         query_embedding = model.encode(
             pregunta
-        )
+        ).tolist()
 
-        # Buscar documentos similares
+        print("✅ Embedding pregunta generado")
+
+        # Buscar similares
         results = collection.query(
             query_embeddings=[
-                query_embedding.tolist()
+                query_embedding
             ],
             n_results=3
         )
 
+        print("🔎 RESULTADOS CHROMA:")
+        print(results)
+
         documentos = results["documents"][0]
+
+        # Validar documentos
+        if not documentos:
+
+            print("❌ Sin documentos encontrados")
+
+            return {
+
+                "respuesta":
+                "No encontré información en los PDFs cargados.",
+
+                "fuentes": []
+            }
+
+        print(
+            f"📄 Documentos encontrados: {len(documentos)}"
+        )
+
+        for i, doc in enumerate(documentos):
+
+            print(f"\n--- DOC {i+1} ---")
+            print(doc[:300])
 
         contexto = "\n\n".join(
             documentos
         )
 
+        print("\n🧠 CONTEXTO ENVIADO A GEMINI:")
+        print(contexto[:1000])
+
         prompt = f"""
 Eres un asistente académico.
 
-RESPONDE SOLO usando el contexto.
+RESPONDE SOLO usando el contexto segun el documento pdf analizado.
 
-Si la respuesta no está en el contexto responde EXACTAMENTE:
+Si no encuentras la respuesta responde:
 
-"No encuentro esa información en el reglamento."
-
-NO inventes información.
+"No encuentro esa información."
 
 CONTEXTO:
 {contexto}
@@ -74,19 +110,29 @@ PREGUNTA:
             prompt
         )
 
+        print("\n✅ RESPUESTA GEMINI:")
+        print(response.text)
+
+        print("========== FIN CONSULTA ==========\n")
+
         return {
+
             "respuesta":
-                response.text,
+            response.text,
 
             "fuentes":
-                documentos
+            documentos
         }
 
     except Exception as e:
 
+        print("❌ ERROR RAG:")
+        print(str(e))
+
         return {
+
             "respuesta":
-                f"Error: {str(e)}",
+            f"Error: {str(e)}",
 
             "fuentes": []
         }
