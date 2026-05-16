@@ -74,6 +74,10 @@ def home(request: Request):
         name="index.html"
     )
 
+# ========================================
+# SUBIR PDF
+# ========================================
+
 @app.post("/upload-pdf")
 async def upload_pdf(
     file: UploadFile = File(...)
@@ -94,7 +98,34 @@ async def upload_pdf(
 
         print(f"📄 Archivo recibido: {file.filename}")
 
-        # Ruta
+        # ========================================
+        # LIMPIAR COLECCIÓN ANTERIOR
+        # ========================================
+
+        global collection
+
+        try:
+
+            client.delete_collection(
+                COLLECTION_NAME
+            )
+
+            print("🗑️ Colección anterior eliminada")
+
+        except:
+
+            pass
+
+        collection = client.get_or_create_collection(
+            COLLECTION_NAME
+        )
+
+        print("✅ Nueva colección creada")
+
+        # ========================================
+        # RUTA PDF
+        # ========================================
+
         pdf_path = os.path.join(
             DOCS_PATH,
             file.filename
@@ -110,7 +141,10 @@ async def upload_pdf(
 
         print(f"✅ PDF guardado: {pdf_path}")
 
-        # Leer PDF
+        # ========================================
+        # LEER PDF
+        # ========================================
+
         loader = PyPDFLoader(
             pdf_path
         )
@@ -119,7 +153,10 @@ async def upload_pdf(
 
         print(f"📚 Páginas cargadas: {len(docs)}")
 
-        # Splitter
+        # ========================================
+        # SPLITTER
+        # ========================================
+
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=500,
             chunk_overlap=50
@@ -131,7 +168,10 @@ async def upload_pdf(
 
         print(f"✂️ Chunks generados: {len(chunks)}")
 
-        # Guardar embeddings
+        # ========================================
+        # GUARDAR EMBEDDINGS
+        # ========================================
+
         for i, chunk in enumerate(chunks):
 
             embedding = embedding_model.encode(
@@ -162,7 +202,7 @@ async def upload_pdf(
                 }]
             )
 
-        print(f"✅ Embeddings guardados")
+        print("✅ Embeddings guardados")
 
         print(
             "📦 Total colección:",

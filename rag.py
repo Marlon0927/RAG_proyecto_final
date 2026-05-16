@@ -4,7 +4,16 @@ import google.generativeai as genai
 
 from config import GEMINI_API_KEY
 
-# Configurar Gemini
+from metrics import (
+    evaluar_fidelidad,
+    evaluar_relevancia,
+    guardar_metricas
+)
+
+# ========================================
+# GEMINI
+# ========================================
+
 genai.configure(
     api_key=GEMINI_API_KEY
 )
@@ -13,11 +22,17 @@ gemini = genai.GenerativeModel(
     "gemini-2.5-flash"
 )
 
-# Modelo embeddings
+# ========================================
+# EMBEDDINGS
+# ========================================
+
 model = SentenceTransformer(
     "all-MiniLM-L6-v2"
 )
 
+# ========================================
+# CONSULTA RAG
+# ========================================
 
 def consultar_rag(pregunta):
 
@@ -27,7 +42,10 @@ def consultar_rag(pregunta):
 
         print(f"❓ Pregunta: {pregunta}")
 
-        # Conectar Chroma
+        # ========================================
+        # CHROMA
+        # ========================================
+
         client = chromadb.PersistentClient(
             path="./chroma_db"
         )
@@ -41,27 +59,46 @@ def consultar_rag(pregunta):
             collection.count()
         )
 
-        # Embedding pregunta
+        # ========================================
+        # EMBEDDING PREGUNTA
+        # ========================================
+
         query_embedding = model.encode(
             pregunta
         ).tolist()
 
         print("✅ Embedding pregunta generado")
 
-        # Buscar similares
+        # ========================================
+        # BÚSQUEDA
+        # ========================================
+
         results = collection.query(
+
             query_embeddings=[
                 query_embedding
             ],
-            n_results=3
+
+            n_results=3,
+
+            include=[
+                "documents",
+                "distances",
+                "metadatas"
+            ]
         )
+
+        documentos = results["documents"][0]
+
+        distancias = results["distances"][0]
 
         print("🔎 RESULTADOS CHROMA:")
         print(results)
 
-        documentos = results["documents"][0]
+        # ========================================
+        # VALIDACIÓN
+        # ========================================
 
-        # Validar documentos
         if not documentos:
 
             print("❌ Sin documentos encontrados")
@@ -71,7 +108,11 @@ def consultar_rag(pregunta):
                 "respuesta":
                 "No encontré información en los PDFs cargados.",
 
-                "fuentes": []
+                "fuentes": [],
+
+                "fidelidad": 0,
+
+                "relevancia": 0
             }
 
         print(
@@ -83,6 +124,10 @@ def consultar_rag(pregunta):
             print(f"\n--- DOC {i+1} ---")
             print(doc[:300])
 
+        # ========================================
+        # CONTEXTO
+        # ========================================
+
         contexto = "\n\n".join(
             documentos
         )
@@ -90,10 +135,14 @@ def consultar_rag(pregunta):
         print("\n🧠 CONTEXTO ENVIADO A GEMINI:")
         print(contexto[:1000])
 
+        # ========================================
+        # PROMPT
+        # ========================================
+
         prompt = f"""
 Eres un asistente académico.
 
-RESPONDE SOLO usando el contexto segun el documento pdf analizado.
+RESPONDE SOLO usando el contexto según el documento PDF analizado.
 
 Si no encuentras la respuesta responde:
 
@@ -106,22 +155,71 @@ PREGUNTA:
 {pregunta}
 """
 
+        # ========================================
+        # GEMINI
+        # ========================================
+
         response = gemini.generate_content(
             prompt
         )
 
+        respuesta = response.text
+
         print("\n✅ RESPUESTA GEMINI:")
-        print(response.text)
+        print(respuesta)
+
+        # ========================================
+        # MÉTRICAS
+        # ========================================
+
+        fidelidad = evaluar_fidelidad(
+            respuesta,
+            contexto
+        )
+
+        relevancia = evaluar_relevancia(
+            distancias
+        )
+
+        print(f"\n📊 Fidelidad: {fidelidad}")
+        print(f"📊 Relevancia: {relevancia}")
+
+        # ========================================
+        # GUARDAR CSV
+        # ========================================
+
+        guardar_metricas({
+
+            "pregunta": pregunta,
+
+            "respuesta": respuesta,
+
+            "fidelidad": fidelidad,
+
+            "relevancia": relevancia
+        })
+
+        print("💾 Métricas guardadas")
 
         print("========== FIN CONSULTA ==========\n")
+
+        # ========================================
+        # RETORNO
+        # ========================================
 
         return {
 
             "respuesta":
-            response.text,
+            respuesta,
 
             "fuentes":
-            documentos
+            documentos,
+
+            "fidelidad":
+            fidelidad,
+
+            "relevancia":
+            relevancia
         }
 
     except Exception as e:
@@ -134,5 +232,9 @@ PREGUNTA:
             "respuesta":
             f"Error: {str(e)}",
 
-            "fuentes": []
+            "fuentes": [],
+
+            "fidelidad": 0,
+
+            "relevancia": 0
         }
