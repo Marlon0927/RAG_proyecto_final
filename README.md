@@ -100,6 +100,8 @@ proyecto-rag/
 │
 ├── app.py
 ├── rag.py
+├── ingest.py
+├── metrics.py
 ├── config.py
 ├── requirements.txt
 │
